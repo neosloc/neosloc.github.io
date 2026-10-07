@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>neosloc</title>
+<meta name="description" content="Integrability, value and make-or-buy for software repositories: what sloccount measured, re-asked for the age of LLMs.">
+<style>
+  :root {
+    --bg: #fbfaf7; --fg: #1d1f21; --muted: #5d6166; --line: #e3e0d8; --card: #ffffff;
+    --accent: #0b6e4f; --code-bg: #f1efe8; --on: #0b6e4f; --off: #c9c4b8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #121416; --fg: #e8e6e1; --muted: #9da3a8; --line: #2a2e33; --card: #181b1e;
+      --accent: #5fd3a5; --code-bg: #1c2024; --on: #5fd3a5; --off: #3a4046;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; background: var(--bg); color: var(--fg);
+    font: 17px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  main { max-width: 860px; margin: 0 auto; padding: 56px 16px 72px; }
+  h1 { font-size: 44px; letter-spacing: -0.02em; margin: 0 0 8px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  h1 span { color: var(--accent); }
+  .lede { font-size: 21px; color: var(--muted); margin: 0 0 28px; max-width: 680px; }
+  h2 { font-size: 22px; margin: 48px 0 12px; }
+  p { margin: 0 0 14px; }
+  a { color: var(--accent); }
+  .links { display: flex; flex-wrap: wrap; gap: 10px; margin: 0 0 32px; }
+  .links a {
+    text-decoration: none; border: 1px solid var(--line); background: var(--card);
+    padding: 8px 14px; border-radius: 8px; color: var(--fg); font-weight: 600; font-size: 15px;
+  }
+  .links a.primary { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+  pre {
+    background: var(--code-bg); border: 1px solid var(--line); border-radius: 10px;
+    padding: 14px 16px; overflow-x: auto; font: 13.5px/1.55 ui-monospace, SFMono-Regular, Menlo, monospace; margin: 0 0 18px;
+  }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.92em; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; }
+  .card h3 { margin: 0 0 6px; font-size: 17px; }
+  .card p { margin: 0; color: var(--muted); font-size: 15.5px; }
+  .on { color: var(--on); } .off { color: var(--off); }
+  footer { margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>neo<span>sloc</span></h1>
+  <p class="lede">sloccount counted lines and priced them with COCOMO. With LLMs writing code, lines are cheap.
+    neosloc measures what still costs something: how easily other systems and agents can use a project,
+    what it is worth, and whether to adopt it or rebuild it.</p>
+
+  <div class="links">
+    <a class="primary" href="https://neosloc.github.io/neosloc/">Documentation</a>
+    <a href="https://github.com/neosloc/neosloc">GitHub</a>
+    <a href="https://pypi.org/project/neosloc/">PyPI</a>
+    <a href="https://neosloc.github.io/neosloc/schema/report-v2.json">JSON Schema</a>
+  </div>
+
+  <pre><code>pip install neosloc        # or: pipx install neosloc / uv tool install neosloc
+neosloc path/to/repo</code></pre>
+
+  <h2>What it reports</h2>
+  <div class="grid">
+    <div class="card"><h3>Ten dimensions</h3><p>Interface, stability, events, identity, portability, agent ergonomics,
+      embeddability, extensibility, observability and change legibility, each a ladder of checkable requirements.</p></div>
+    <div class="card"><h3>Per surface</h3><p>Services, CLIs, libraries, desktop apps and frontends are judged on their
+      own terms; dimensions that can't apply are n/a, not zero.</p></div>
+    <div class="card"><h3>Make or buy</h3><p>Tokens, agent hours and human days to rebuild it with agents, against minutes
+      to adopt it as it is.</p></div>
+    <div class="card"><h3>neoCOCOMO</h3><p>What a codebase is worth when agents can re-type it, and how much of it lives
+      only in its history.</p></div>
+    <div class="card"><h3>LLM evaluators</h3><p>A probe tries real integration tasks from the docs; a judge and a review
+      panel check the results. Anthropic or OpenRouter.</p></div>
+    <div class="card"><h3>Built for scripts</h3><p>JSON output and errors that follow a published schema, typed exit
+      statuses, structured logs. No dependencies, Python 3.8+.</p></div>
+  </div>
+
+  <h2>Example: a Redis-in, MQTT-out geo server</h2>
+  <p>neosloc 0.7.0 on <a href="https://github.com/openfantasymap/geomqtt">geomqtt</a> (excerpt):</p>
+<pre><code>Surfaces: service
+
+Interface surface   <span class="on">■■■■</span>  4 exemplary  A second surface: another transport (HTTP and a protocol, two protocols), ...
+Events              <span class="on">■■■</span><span class="off">□</span>  3 solid      Signed webhooks registrable through the API, or two mechanisms (webhooks, streams, a broker).
+Agent ergonomics    <span class="on">■</span><span class="off">□□□</span>  1 ad hoc     Errors are machine-readable: ... a standard protocol's native error replies ...
+Embeddability       <span class="on">■■■■</span>  4 exemplary  Composition artifacts (compose, Helm, IaC).
+Integrability index (0-4, 9 applicable dimensions):  1.78
+
+Make or buy (over 3 years)
+  Make with agents:  177k output + 4.4M input tokens (85% cached) on anthropic:claude-opus-5-5 = $7;
+                     2.0 agent-hours, 3.6 human days (2.1 steering + 1.5 rediscovering history)
+  Buy (adopt as is): 5 min to running (via service) + 2 min to first use (via service),
+                     4.0 h/year of upgrades -> $812
+  Verdict:           BUY: adopting this is cheaper (make/buy = 3.48); buying wins below $671/year</code></pre>
+
+  <footer>MIT licensed · <a href="https://github.com/neosloc/neosloc/blob/main/CHANGELOG.md">Changelog</a> ·
+    All coefficients are uncalibrated; treat numbers as rankings. <a href="https://neosloc.github.io/neosloc/calibration/">Calibration</a></footer>
+</main>
+</body>
+</html>
